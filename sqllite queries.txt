@@ -1,0 +1,69 @@
+1
+from sqlalchemy import create_engine
+import numpy as np
+
+launch_site=%sql select LAUNCH_SITE from NBW10902.SPACEXTBL;
+launch_site=list(launch_site)
+print(np.unique(launch_site))
+
+
+2
+
+import pandas as pd
+records=%sql select * from NBW10902.SPACEXTBL WHERE LAUNCH_SITE like 'KSC%'
+records=pd.DataFrame(records)
+records.head()
+
+3
+nasa_boosters=%sql select * from NBW10902.SPACEXTBL WHERE CUSTOMER='NASA (CRS)'
+nasa_boosters=pd.DataFrame(nasa_boosters)
+print('The total payload mass carried by boosters launched by NASA (CRS) was: ',nasa_boosters[5].sum())
+
+4
+
+F9_booster=%sql select * from NBW10902.SPACEXTBL WHERE BOOSTER_VERSION='F9 v1.1'
+F9_booster=pd.DataFrame(F9_booster)
+print('The total payload mass carried by booster version F9 v1.1 was: ',F9_booster[5].mean())
+
+
+5
+
+succesful_landing=%sql select * from NBW10902.SPACEXTBL WHERE Landing__Outcome='Success (drone ship)'
+succesful_landing=pd.DataFrame(succesful_landing)
+succesful_landing
+
+
+6
+booster1=%sql select BOOSTER_VERSION from NBW10902.SPACEXTBL WHERE Landing__Outcome like 'Success%'  and PAYLOAD_MASS__KG_>4000 and PAYLOAD_MASS__KG_<6000
+booster1=list(booster1)
+booster1
+
+
+7
+mission_out=%sql select MISSION_OUTCOME from NBW10902.SPACEXTBL
+mission_out=pd.DataFrame(mission_out)
+mission_out[0].value_counts()
+
+
+8
+booster_maxmass=%sql select BOOSTER_VERSION,PAYLOAD_MASS__KG_ from NBW10902.SPACEXTBL where PAYLOAD_MASS__KG_=(select MAX(PAYLOAD_MASS__KG_) from NBW10902.SPACEXTBL)
+booster_maxmass=list(booster_maxmass)
+booster_maxmass
+
+
+9
+booster_2017=%sql select DATE,LANDING__OUTCOME,BOOSTER_VERSION,LAUNCH_SITE from NBW10902.SPACEXTBL where DATE like ('2017%') and LANDING__OUTCOME like ('Success%')
+booster_2017=list(booster_2017)
+booster_2017
+
+
+10
+successful_landing=%sql select * from NBW10902.SPACEXTBL where LANDING__OUTCOME like ('Success%') and DATE>('2010-06-04') AND DATE<('2017-03-20')
+successful_landing=pd.DataFrame(successful_landing)
+successful_landing.sort_values(0,ascending=False,inplace=True)
+successful_landing
+
+
+11
+%sql select max(DATE) from NBW10902.SPACEXTBL
+
